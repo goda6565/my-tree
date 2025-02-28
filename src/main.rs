@@ -24,7 +24,7 @@ fn tree(target: &path::PathBuf, level: isize, finished_level: &mut Vec<isize>) {
     // ファイル一覧をループ
     for (i, file) in files.into_iter().enumerate() {
         let path = file.unwrap().path();
-        // level の数だけプレフィックスを出力
+        // 既に上の階層で終了している場合は、縦棒を出力しない
         for j in 0..level {
             if finished_level.contains(&j) {
                 print!("    ");
@@ -35,12 +35,12 @@ fn tree(target: &path::PathBuf, level: isize, finished_level: &mut Vec<isize>) {
         // ファイル名を出力
         let file_name = path.file_name().unwrap().to_string_lossy();
         if path.is_dir() {
-            if i == count - 1 {
+            if i == count - 1 { // その階層で最後のファイル
                 println!("└── {}", file_name);
-                finished_level.push(level);
+                finished_level.push(level); // その階層を終了したことを記録
                 tree(&path, level + 1, finished_level);
                 finished_level.pop(); // 再帰呼び出し後に pop する
-            } else {
+            } else { // その階層で最後のファイルでない
                 println!("├── {}", file_name);
                 tree(&path, level + 1, finished_level);
             }
